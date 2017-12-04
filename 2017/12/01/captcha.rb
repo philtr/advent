@@ -1,6 +1,6 @@
 class Captcha
   def initialize(challenge, halfway: false)
-    @challenge = challenge.to_s.gsub(/[^\d]/,"")
+    @challenge = challenge.to_s.chomp
     @halfway = halfway
   end
 
@@ -15,7 +15,7 @@ class Captcha
   private
 
   def challenge_digits
-    @challenge_digits ||= @challenge.to_s.reverse.chars
+    @challenge_digits ||= @challenge.reverse.chars
   end
 
   def check(digit, index)
