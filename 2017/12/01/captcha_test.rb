@@ -26,6 +26,13 @@ class TestCaptcha < Minitest::Test
     input = File.read(File.join(File.dirname(__FILE__), "captcha_input.txt"))
     captcha = Captcha.new(input)
 
-    assert_equal captcha.response, 0
+    assert_equal captcha.response, 1223
+  end
+
+  def test_challenge_with_distance
+    input = File.read(File.join(File.dirname(__FILE__), "captcha_input.txt"))
+    captcha = Captcha.new(input, halfway: true)
+
+    assert_equal captcha.response, 1284
   end
 end
