@@ -9,7 +9,6 @@ class ExpenseReport
   end
   
   def values_for_total(total, operands: 2)
-    sum = nil
     entries = report.dup
     
     while entries.any?
@@ -17,13 +16,8 @@ class ExpenseReport
       
       entries.combination(operands - 1) do |combination|
         candidate = [entry, *combination]
-        
-        if candidate.sum == total
-          return candidate
-        end
+        return candidate if candidate.sum == total
       end
-     
-      []
     end
   end
 end
