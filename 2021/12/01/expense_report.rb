@@ -49,7 +49,7 @@ RSpec.describe ExpenseReport do
    describe "product of values that add to 2021" do
      it "is the correct answer" do
        expect(subject.values_for_total(2020).reduce(&:*)).to eq(712075)
-       expect(subject.values_for_total(2020, operands: 3).reduce(&:*)).to eq(1)
+       expect(subject.values_for_total(2020, operands: 3).reduce(&:*)).to eq(145245270)
      end
    end
   end
