@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+Dir.glob("./**/*_test.rb").each { |file| load file }
