@@ -4,5 +4,5 @@ require_relative "elf_calories"
 
 input = File.read("input_a.txt")
 
-puts ElfCalories.top(input, 3)
-
+puts "Part 1: #{ElfCalories.top(input)}"
+puts "Part 2: #{ElfCalories.top(input, 3)}"

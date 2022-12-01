@@ -1,10 +1,9 @@
 module ElfCalories
-  ELF_SEP, ITEM_SEP = ["\n\n", "\n"]
+  ELF_SEP = "\n\n"
 
   class << self
 
-    def most_calories(input) = process_input(input).max
-    def top(input, n) = process_input(input).max(3).sum
+    def top(input, n=1) = process_input(input).max(n).sum
 
     private
 
@@ -13,9 +12,8 @@ module ElfCalories
       .map(&method(:process_elf))
 
     def process_elf(elf_input) = elf_input
-      .split(ITEM_SEP)
-      .map(&:to_i)
-      .sum
+      .split
+      .sum(&:to_i)
 
   end
 end
