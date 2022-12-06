@@ -9,7 +9,7 @@ module Communicator
   def message_start(signal) = first_unique_chars(signal, 14)
 
   def first_unique_chars(signal, n)
-    signal.chars.each_cons(n).each_with_index do |chars, index|
+    signal.chars.each_cons(n).with_index do |chars, index|
       return index+n if chars.uniq.size == n
     end
   end
