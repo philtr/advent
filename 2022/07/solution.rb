@@ -3,7 +3,7 @@ class CommunicatorStorage
   attr_reader :total_space
   attr_accessor :usage
 
-  def initialize(total_space: 70000000)
+  def initialize(total_space: 70_000_000)
     @usage = Hash.new(0)
     @total_space = total_space
   end
@@ -22,8 +22,8 @@ class CommunicatorStorage
 
       when /(\d+)/ then
         size = $1.to_i
-        usage["/"] += $1.to_i
-        cwd.each { usage[_1] += $1.to_i }
+        usage["/"] += size
+        cwd.each { usage[_1] += size }
       end
     end
   end
