@@ -14,24 +14,25 @@ module KnottedRope
 
   module_function
 
+  # returns the number of unique locations visited by the tail of the rope
   def run(instructions, knots: 2)
     rope = Array.new(knots, [1,1])
-    visited = [START.dup]
+    visited = [START]
 
     instructions.map(&:split).map do |direction, distance|
       move = DIRECTIONS[direction]
 
       distance.to_i.times do
-        # make the move
-        rope[0] = apply(rope[0], move)
+        # move the head to the instructed location
+        rope[0] = apply(rope.first, move)
 
-        # follow each knot in the rope
-        rope.each.with_index.reduce(rope[0]) do |prev, (cur, i)|
-          rope[i] = follow(prev, cur)
+        # follow each knot in the rope and update rope positions
+        rope = rope.reduce([]) do |knots, cur|
+          knots << follow(knots.last || cur, cur)
         end
 
         # mark tail as visited
-        visited << rope.last.dup
+        visited << rope.last
       end
     end
 
@@ -39,30 +40,41 @@ module KnottedRope
   end
 
 
+  # move knots according to simplistic string physics
   def follow(prev, cur)
     case
-    when adjacent?(prev, cur)
-      return cur
-    when in_line?(prev, cur)
-      apply(cur, ortho(prev, cur))
-    else
-      apply(cur, diag(prev, cur))
+    when adjacent?(prev, cur)   then return cur
+    when orthogonal?(prev, cur) then apply(cur, ortho(prev, cur))
+    when true                   then apply(cur, diag(prev, cur))
     end
   end
 
-  def tr(h, t)        = [h, t].transpose
-  def in_line?(h, t)  = tr(h, t).map { _1.uniq.size }.any? { _1 < 2 }
-  def adjacent?(h, t) = sub(h, t).none? { _1.abs > 1 }
-  def apply(a, b)     = tr(a, b).map { _1.reduce(&:+) }
-  def sub(h, t)       = tr(h, t).map { _1.reduce(&:-) }
-  def ortho(h, t)     = sub(h, t).map { _1 / 2 }
-  def diag(h, t)      = sub(h, t).map { (_1 / 2.0) > 0 ? 1 : -1 }
+  # returns true if the two points are adjacent (incl. diagonal)
+  def adjacent?(a, b) = sub(a, b).none? { _1.abs > 1 }
+
+  # apply the given move transformation and return the result
+  def apply(a, b) = tr(a, b).map { _1.reduce(&:+) }
+
+  # returns the move transformation for a diagonal move
+  def diag(a, b) = sub(a, b).map { (_1 / 2.0) > 0 ? 1 : -1 }
+
+  # returns true if the two points are orthogonal (they share a column or row)
+  def orthogonal?(a, b) = tr(a, b).any? { _1.reduce(:==) }
+
+  # returns the move transformation for an orthogonal move
+  def ortho(a, b) = sub(a, b).map { _1 / 2 }
+
+  # returns the differential between two points
+  def sub(a, b) = tr(a, b).map { _1.reduce(&:-) }
+
+  # transposes two arrays such that x and y are collected
+  def tr(a, b) = [a, b].transpose
 end
 
 instructions = File.readlines(ARGV[0])
 
 puts "    in #{Benchmark.measure { puts "PART 1: #{KnottedRope.run(instructions)}" }.real.round(5)} seconds"
-puts "    in #{Benchmark.measure { puts "PART 2: #{KnottedRope.run(instructions)}" }.real.round(5)} seconds"
+puts "    in #{Benchmark.measure { puts "PART 2: #{KnottedRope.run(instructions, knots: 10)}" }.real.round(5)} seconds"
 
 describe KnottedRope do
   let(:rope) { KnottedRope }
