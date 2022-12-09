@@ -26,10 +26,13 @@ def adjacent?(h,t)  = sub(h,t).none? { _1.abs > 1 }
 def add(a,b)        = tr(a,b).map { _1.reduce(&:+) }
 def sub(h,t)        = tr(h,t).map { _1.reduce(&:-) }
 
+instructions = File.readlines(ARGV[0])
+
+## PART 1
 $head = ($tail = [1,1]).dup
 $visited = [[1,1]]
 
-File.readlines(ARGV[0]).map do |instruction|
+instructions.map do |instruction|
   direction, distance = instruction.split
   move = DIRECTIONS[direction]
 
@@ -37,7 +40,35 @@ File.readlines(ARGV[0]).map do |instruction|
     $head = add($head,move)
     $tail = follow($head, $tail)
 
-    puts "#{instruction.chomp}.#{j+1}: { h: #$head, t: #$tail }"
+    # puts "#{instruction.chomp}.#{j+1}: { h: #$head, t: #$tail }"
+
+    $visited << $tail
+  end
+end
+
+puts $visited.uniq.length
+
+#== PART 2
+
+$head   = [1,1]
+$knots  = 8.times.map { [1,1] }
+$tail   = [1,1]
+
+$visited = [[1,1]]
+
+instructions.map do |instruction|
+  direction, distance = instruction.split
+  move = DIRECTIONS[direction]
+
+  distance.to_i.times do |j|
+    $head = add($head,move)
+
+    $knots.each.with_index.reduce($head) do |prev, (cur, i)|
+      $knots[i] = follow(prev, cur)
+      follow(prev, cur)
+    end
+
+    $tail = follow($knots.last, $tail)
 
     $visited << $tail
   end
