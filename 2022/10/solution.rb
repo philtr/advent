@@ -1,5 +1,5 @@
 WIDTH = 40
-ON, OFF = ["##", "  "]
+ON, OFF = ["▓", "░"]
 
 cycles, _i, screen = $<.reduce([{1=>1}, 1, ""]) do |(cycles, i, screen), ins|
 
@@ -27,4 +27,4 @@ end
 puts 20.step(by: 40, to: 220).map { cycles[_1] * _1 }.reduce(&:+)
 
 # part 2
-puts screen.chars.each_slice(WIDTH*2).map(&:join)
+puts screen.chars.each_slice(WIDTH).map(&:join)
