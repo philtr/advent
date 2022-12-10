@@ -1,25 +1,30 @@
-cycles, _i, screen = $<.reduce([{0=>1}, 0, ""]) do |(cycles, i, screen), ins|
-  cursor = cycles[i] % 40
+WIDTH = 40
+ON, OFF = ["##", "  "]
+
+cycles, _i, screen = $<.reduce([{1=>1}, 1, ""]) do |(cycles, i, screen), ins|
+
+  # draw pixel on screen
+  cursor = (cycles[i] + 1) % WIDTH
   sprite = (cursor-1)..(cursor+1)
-  screen << (sprite.cover?(i % 40) ? "#" : ".")
+  screen << (sprite.cover?(i % WIDTH) ? ON : OFF)
 
-  # process instruction
-  case ins
-  when /n/ then next [ cycles.merge(i+1 => cycles[i]),
-                       i+1,
-                       screen ]
-  when /-?\d+/ then
-    cycles[i+1] = cycles[i]
+  # set next cycle's register to this one's value
+  cycles[i+1] = cycles[i]
+
+  # run an extra cycle if this is an addx operation
+  if ins =~ /-?\d+/
+    # finish the 'calculation'
     cycles[i+2] = cycles[i] + $&.to_i
-
-    screen << (sprite.cover?((i+1) % 40) ? "#" : ".")
-
-    next [cycles, i+2, screen]
+    screen << (sprite.cover?((i+1) % WIDTH) ? ON : OFF)
+    i += 1
   end
+
+  [cycles, i+1, screen]
+
 end
 
 # part 1
-puts 20.step(by: 40, to: cycles.size).map { cycles[_1] * _1 }.reduce(&:+)
+puts 20.step(by: 40, to: 220).map { cycles[_1] * _1 }.reduce(&:+)
 
 # part 2
-puts screen.chars.each_slice(40).map(&:join)
+puts screen.chars.each_slice(WIDTH*2).map(&:join)
